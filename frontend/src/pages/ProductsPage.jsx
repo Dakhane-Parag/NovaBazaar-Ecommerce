@@ -5,6 +5,7 @@ import SortDropdown from '../components/SortDropdown'
 import Pagination from '../components/Pagination'
 import LoadingSpinner from '../components/LoadingSpinner'
 import ErrorMessage from '../components/ErrorMessage'
+import SearchBar from '../components/SearchBar'
 
 export default function ProductsPage() {
   const {
@@ -29,7 +30,8 @@ export default function ProductsPage() {
     <div className="min-h-screen bg-gray-100">
       <header className="bg-gray-900 text-white px-4 py-3 flex items-center justify-between sticky top-0 z-10">
         <h1 className="text-xl font-bold text-orange-400">NovaBazaar</h1>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-1 justify-end">
+          <SearchBar />
           <ProductFilters
             category={category}
             brand={brand}

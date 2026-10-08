@@ -1,8 +1,11 @@
 import logging
 import os
-from contextlib import asynccontextmanager
+import threading
 
 from fastapi import FastAPI
+
+from app.consumers import product_events
+from app.db import elasticsearch as es
 
 SERVICE_NAME = os.getenv("SERVICE_NAME", "unknown-service")
 PORT = int(os.getenv("PORT", "8000"))
@@ -13,15 +16,21 @@ logging.basicConfig(
 )
 logger = logging.getLogger(SERVICE_NAME)
 
+app = FastAPI(title=SERVICE_NAME)
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
+
+@app.on_event("startup")
+def startup():
     logger.info("Starting application")
-    yield
-    logger.info("Shutting down application")
+    try:
+        es.ensure_index()
+        logger.info("Elasticsearch connection established")
+    except Exception as e:
+        logger.error(f"Elasticsearch connection failed: {e}")
 
-
-app = FastAPI(title=SERVICE_NAME, lifespan=lifespan)
+    consumer_thread = threading.Thread(target=product_events.start_consumer, daemon=True)
+    consumer_thread.start()
+    logger.info("Kafka consumer thread started")
 
 
 @app.get("/health")

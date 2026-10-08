@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8502'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8100'
 
 export async function getProducts(params = {}) {
   const queryParams = new URLSearchParams()
@@ -8,7 +8,7 @@ export async function getProducts(params = {}) {
   if (params.brand) queryParams.set('brand', params.brand)
   if (params.sort) queryParams.set('sort', params.sort)
 
-  const url = `${API_BASE_URL}/products?${queryParams.toString()}`
+  const url = `${API_BASE_URL}/api/products?${queryParams.toString()}`
   const response = await fetch(url)
 
   if (!response.ok) {
@@ -19,7 +19,7 @@ export async function getProducts(params = {}) {
 }
 
 export async function getProductById(productId) {
-  const url = `${API_BASE_URL}/products/${productId}`
+  const url = `${API_BASE_URL}/api/products/${productId}`
   const response = await fetch(url)
 
   if (response.status === 404) {
